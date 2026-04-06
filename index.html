@@ -565,6 +565,77 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db   = firebase.firestore();
 
+// ══════════════════════════════════════════════
+//  AUDIO — Web Speech API (ko-KR)
+// ══════════════════════════════════════════════
+window.speakKorean = function(text) {
+  if (!text) return;
+  window.speechSynthesis.cancel();
+  var u = new SpeechSynthesisUtterance(text);
+  u.lang = 'ko-KR';
+  u.rate = 0.75;
+  u.pitch = 1.05;
+  window.speechSynthesis.speak(u);
+};
+
+window.speakWord = function(text) { window.speakKorean(text); };
+
+window.speakCurrentQuestion = function() {
+  var q = quizQ[quizIdx];
+  if (!q) return;
+  if (/[\uAC00-\uD7AF\u1100-\u11FF\u3130-\u318F]/.test(q.question)) {
+    window.speakKorean(q.question);
+  }
+};
+
+window.makeKoreanClickable = function() {
+  var card = document.getElementById('lesson-card-content');
+  if (!card) return;
+  var reKo = /[\uAC00-\uD7AF\u1100-\u11FF\u3130-\u318F]/;
+
+  // 1. Tarjetas de grilla (.card-grid-item) — celda completa clickeable + badge 🔊
+  card.querySelectorAll('.card-grid-item').forEach(function(item) {
+    if (item.dataset.sb) return;
+    var el = item.querySelector('.gi-korean');
+    if (!el || !reKo.test(el.textContent)) return;
+    item.dataset.sb = '1';
+    item.style.cursor = 'pointer';
+    item.title = 'Tap para escuchar';
+    var badge = document.createElement('div');
+    badge.textContent = '🔊';
+    badge.style.cssText = 'font-size:10px;margin-top:2px;opacity:.7;text-align:center';
+    item.appendChild(badge);
+    item.addEventListener('click', function() { window.speakKorean(el.textContent); });
+  });
+
+  // 2. Texto coreano en ejemplos (.ex-korean) — botón 🔊 inline
+  card.querySelectorAll('.ex-korean').forEach(function(el) {
+    if (el.dataset.sb || !reKo.test(el.textContent)) return;
+    el.dataset.sb = '1';
+    el.style.cursor = 'pointer';
+    el.title = 'Tap para escuchar';
+    var btn = document.createElement('button');
+    btn.textContent = '🔊';
+    btn.style.cssText = 'background:#b8e0f7;border:2px solid #7bbde0;border-radius:50%;width:26px;height:26px;font-size:11px;cursor:pointer;margin-left:6px;vertical-align:middle;padding:0';
+    btn.addEventListener('click', function(e) { e.stopPropagation(); window.speakKorean(el.textContent); });
+    el.addEventListener('click', function(e) { e.stopPropagation(); window.speakKorean(el.textContent); });
+    el.appendChild(btn);
+  });
+
+  // 3. Carácter grande (.card-main-korean)
+  card.querySelectorAll('.card-main-korean').forEach(function(el) {
+    if (el.dataset.sb || !reKo.test(el.textContent)) return;
+    el.dataset.sb = '1';
+    el.style.cursor = 'pointer';
+    el.title = 'Tap para escuchar';
+    el.addEventListener('click', function() { window.speakKorean(el.textContent); });
+    var hint = document.createElement('div');
+    hint.textContent = '🔊 Tap para escuchar';
+    hint.style.cssText = 'font-size:11px;color:#7a4a1e;font-weight:700;text-align:center;margin-bottom:8px';
+    el.insertAdjacentElement('afterend', hint);
+  });
+};
+
 let currentUser = null;
 
 auth.onAuthStateChanged(user => {
