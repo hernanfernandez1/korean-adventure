@@ -87,7 +87,7 @@ body{font-family:'Nunito',sans-serif;background:#2a4a1a;touch-action:manipulatio
 .hud-streak{font-size:12px;font-weight:800;color:var(--yellow);white-space:nowrap}
 
 .map-container{margin-top:46px;width:100%;height:calc(100vh - 46px);overflow:auto;padding:16px;display:flex;align-items:flex-start;justify-content:center}
-.map-grid{display:grid;grid-template-columns:repeat(3,170px);grid-template-rows:repeat(3,170px);gap:12px;position:relative}
+.map-grid{display:grid;grid-template-columns:repeat(3,170px);grid-template-rows:auto;gap:12px;position:relative}
 
 .map-area{position:relative;background:var(--cream);border:4px solid var(--brown-dark);box-shadow:4px 4px 0 var(--brown-dark);border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;padding:12px;text-align:center;transition:transform .1s,box-shadow .1s}
 .map-area:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--brown-dark)}
@@ -397,6 +397,29 @@ body{font-family:'Nunito',sans-serif;background:#2a4a1a;touch-action:manipulatio
         <div class="area-name">CULTURE<br>PALACE</div>
         <div class="area-sub">Curiosidades</div>
         <div class="area-progress"><div class="area-progress-fill" id="prog-culture" style="width:0%"></div></div>
+      </div>
+
+      <!-- Row 4 -->
+      <div class="map-area" onclick="openArea('kpop')">
+        <div class="new-badge">¡NUEVO!</div>
+        <div class="area-icon">🎵</div>
+        <div class="area-name">K-POP<br>STAGE</div>
+        <div class="area-sub">Aprende con canciones</div>
+        <div class="area-progress"><div class="area-progress-fill" id="prog-kpop" style="width:0%"></div></div>
+      </div>
+
+      <div class="map-area" onclick="openArea('kdrama')">
+        <div class="new-badge">¡NUEVO!</div>
+        <div class="area-icon">🎬</div>
+        <div class="area-name">DRAMA<br>HOUSE</div>
+        <div class="area-sub">Aprende con K-dramas</div>
+        <div class="area-progress"><div class="area-progress-fill" id="prog-kdrama" style="width:0%"></div></div>
+      </div>
+
+      <div class="map-area" onclick="goProgress()" style="background:linear-gradient(135deg,#fff8e1,#fce4ec)">
+        <div class="area-icon">📊</div>
+        <div class="area-name">MI<br>PROGRESO</div>
+        <div class="area-sub">Stats & logros</div>
       </div>
 
     </div>
@@ -734,6 +757,199 @@ const VOCAB_VERBS=[
   {k:'쓰다',r:'sseuda',s:'escribir',e:'✏️'},{k:'말하다',r:'malhada',s:'hablar',e:'💬'},
   {k:'좋아하다',r:'joahada',s:'gustar/querer',e:'❤️'},{k:'사랑하다',r:'saranghada',s:'amar',e:'💕'},
 ];
+
+// ── K-POP ──
+const VOCAB_KPOP_FAN=[
+  {k:'파이팅',r:'paiting',s:'¡Ánimo! / ¡Fighting!',e:'💪',tip:'Se usa para dar aliento, muy típico del K-pop'},
+  {k:'오빠',r:'oppa',s:'Hermano mayor (chica→chico)',e:'🧑',tip:'Las fans lo usan para llamar a sus idols'},
+  {k:'언니',r:'eonni',s:'Hermana mayor (chica→chica)',e:'👩'},
+  {k:'최애',r:'choae',s:'Bias (tu favorito del grupo)',e:'❤️',tip:'Ej: 내 최애는 뷔야 = Mi bias es V'},
+  {k:'덕후',r:'deoku',s:'Fan muy obsesiva/o',e:'🤩',tip:'Versión coreana de "otaku", pero para K-pop'},
+  {k:'아이돌',r:'aidol',s:'ídolo / idol',e:'⭐'},
+  {k:'팬',r:'paen',s:'fan',e:'🙋'},
+  {k:'콘서트',r:'konseoteu',s:'concierto',e:'🎤'},
+  {k:'노래',r:'norae',s:'canción',e:'🎵'},
+  {k:'춤',r:'chum',s:'baile',e:'💃'},
+  {k:'가수',r:'gasu',s:'cantante',e:'🎙️'},
+  {k:'그룹',r:'geurup',s:'grupo',e:'👥'},
+  {k:'앨범',r:'aelbum',s:'álbum',e:'💿'},
+  {k:'직캠',r:'jikkaem',s:'fancam',e:'📹'},
+  {k:'뮤직비디오',r:'myujik bidio',s:'videoclip (MV)',e:'🎬'},
+  {k:'응원',r:'eungwon',s:'apoyo / cheers',e:'📣'},
+];
+const VOCAB_KPOP_WORDS=[
+  {k:'별',r:'byeol',s:'estrella',e:'⭐',tip:'"Dynamite" BTS: "I\'m in the stars tonight"'},
+  {k:'밤',r:'bam',s:'noche',e:'🌙',tip:'"밤편지" de IU — una de las mejores canciones'},
+  {k:'우주',r:'uzu',s:'universo',e:'🌌',tip:'"DNA" BTS: 우주가 생긴 그 날부터 (Desde que nació el universo)'},
+  {k:'꿈',r:'kkum',s:'sueño',e:'💭',tip:'Aparece en muchas canciones de K-pop'},
+  {k:'사랑',r:'sarang',s:'amor',e:'❤️',tip:'La palabra más usada en el K-pop'},
+  {k:'마음',r:'maeum',s:'corazón / mente',e:'💖'},
+  {k:'행복',r:'haengbok',s:'felicidad',e:'😊'},
+  {k:'빛',r:'bit',s:'luz',e:'✨',tip:'"빛이 나" de EXO'},
+  {k:'눈물',r:'nunmul',s:'lágrimas',e:'😢'},
+  {k:'기억',r:'gijeok',s:'recuerdo',e:'📸'},
+  {k:'하늘',r:'haneul',s:'cielo',e:'☁️'},
+  {k:'바람',r:'baram',s:'viento',e:'💨'},
+  {k:'불꽃',r:'bulkkot',s:'llama / fuego',e:'🔥',tip:'"Fire" de BTS = 불타오르네'},
+  {k:'목소리',r:'mokssori',s:'voz',e:'🗣️'},
+  {k:'손',r:'son',s:'mano',e:'🤝'},
+  {k:'눈',r:'nun',s:'ojos / nieve',e:'👀'},
+];
+
+const KPOP_SONGS=[
+  {
+    song:'Dynamite — BTS',
+    emoji:'💎',
+    lines:[
+      {k:"오늘 밤 별 속에서 빛나고 싶어",r:"oneul bam byeol sogeseo bitnago sipeo",s:"Esta noche quiero brillar entre las estrellas"},
+      {k:"Cause I, I, I'm in the stars tonight",r:"(inglés)",s:"Porque yo estoy en las estrellas esta noche"},
+    ],
+    vocab:[
+      {k:'오늘',r:'oneul',s:'hoy'},{k:'밤',r:'bam',s:'noche'},{k:'별',r:'byeol',s:'estrella'},{k:'빛나다',r:'bitnada',s:'brillar'},
+    ],
+    note:'¡Esta canción mezcla coreano e inglés! Fue #1 en Billboard en 2020. 🏆'
+  },
+  {
+    song:'Boy With Luv — BTS ft. Halsey',
+    emoji:'🌹',
+    lines:[
+      {k:"오, 이 작은 것들을 위한 시",r:"o, i jageun geotdeureul wihan si",s:"Oh, un poema para estas pequeñas cosas"},
+      {k:"내 눈 동자에 담긴 네 모습",r:"nae nun dongja-e damgin ne moseup",s:"Tu imagen guardada en mis pupilas"},
+    ],
+    vocab:[
+      {k:'작은',r:'jageun',s:'pequeño'},{k:'위한',r:'wihan',s:'para'},{k:'눈',r:'nun',s:'ojos'},{k:'모습',r:'moseup',s:'apariencia/imagen'},
+    ],
+    note:'작은 것들을 위한 시 = "Poema para las cosas pequeñas". El título coreano es más poético que "Boy With Luv" 🌸'
+  },
+  {
+    song:'Lovesick Girls — BLACKPINK',
+    emoji:'🖤',
+    lines:[
+      {k:"우린 lovesick girls",r:"urin lovesick girls",s:"Somos lovesick girls"},
+      {k:"사랑을 찾다가 상처만 받지만",r:"sarangeul chatdaga sangcheoman batjiman",s:"Buscando amor solo recibimos heridas, pero..."},
+    ],
+    vocab:[
+      {k:'우리',r:'uri',s:'nosotros/as'},{k:'사랑',r:'sarang',s:'amor'},{k:'찾다',r:'chatda',s:'buscar'},{k:'상처',r:'sangcheo',s:'herida'},
+    ],
+    note:'우리 (uri) = nosotros/as. En coreano se usa mucho para hablar del grupo. 🖤💗'
+  },
+  {
+    song:'Eight (에잇) — IU ft. Suga (BTS)',
+    emoji:'🎂',
+    lines:[
+      {k:"스물다섯, 스물하나",r:"seumuldaset, seumulhana",s:"Veinticinco, veintiuno"},
+      {k:"우리가 가장 빛나던 그 시절",r:"uriga gajang bitnadeun geu sijeol",s:"La época en que más brillábamos"},
+    ],
+    vocab:[
+      {k:'스물다섯',r:'seumuldaset',s:'veinticinco'},{k:'스물하나',r:'seumulhana',s:'veintiuno'},{k:'가장',r:'gajang',s:'lo más / el más'},{k:'시절',r:'sijeol',s:'época/tiempo'},
+    ],
+    note:'IU es una de las artistas más queridas de Corea. 스물다섯 스물하나 también es nombre de un K-drama. 🎵'
+  },
+  {
+    song:'LALISA — LISA (BLACKPINK)',
+    emoji:'👑',
+    lines:[
+      {k:"내 이름은 리사",r:"nae ireumeun risa",s:"Mi nombre es Lisa"},
+      {k:"난 강해, 난 자유로워",r:"nan ganghae, nan jayurowo",s:"Soy fuerte, soy libre"},
+    ],
+    vocab:[
+      {k:'이름',r:'ireum',s:'nombre'},{k:'강하다',r:'ganghada',s:'ser fuerte'},{k:'자유',r:'jayu',s:'libertad/libre'},
+    ],
+    note:'난 = 나는 (yo, informal). ¡Esta canción es perfecta para aprender a presentarte! 👑'
+  },
+];
+
+// ── K-DRAMA ──
+const VOCAB_KDRAMA_EMOTIONS=[
+  {k:'사랑해',r:'saranghae',s:'Te amo (informal)',e:'❤️',tip:'La frase más escuchada en K-dramas'},
+  {k:'보고 싶어',r:'bogo sipeo',s:'Te extraño',e:'🥺'},
+  {k:'설레다',r:'seolleda',s:'Sentir mariposas / emoción romántica',e:'🦋',tip:'No tiene traducción exacta al español. Es esa sensación nerviosa-emocionante'},
+  {k:'운명이야',r:'unmyeongi ya',s:'Es el destino',e:'🌟',tip:'Frase clásica de los dramas románticos'},
+  {k:'인연',r:'inyeon',s:'Lazo del destino / conexión',e:'🔗',tip:'De la película "Past Lives" (2023)'},
+  {k:'행복해',r:'haengbokhae',s:'Soy feliz',e:'😊'},
+  {k:'그리워',r:'geuriwo',s:'Te añoro / extraño mucho',e:'💭',tip:'Más profundo que 보고 싶어'},
+  {k:'아프다',r:'apeuda',s:'Duele / me duele',e:'💔'},
+];
+const VOCAB_KDRAMA_PHRASES=[
+  {k:'진짜?',r:'jinjja?',s:'¿En serio? / ¿De verdad?',e:'😮',tip:'Se escucha constantemente en los dramas'},
+  {k:'대박!',r:'daebak!',s:'¡Increíble! / ¡Wow!',e:'🤯',tip:'Expresión de sorpresa muy popular'},
+  {k:'헐',r:'heol',s:'¡No puede ser! / ¡Uff!',e:'😱'},
+  {k:'어떡해',r:'eotteokae',s:'¿Qué hago? / ¡Ay no!',e:'😰',tip:'Se dice cuando no sabés qué hacer'},
+  {k:'제발',r:'jebal',s:'¡Por favor! (desesperado)',e:'🙏'},
+  {k:'왜 그래?',r:'wae geurae?',s:'¿Qué te pasa? / ¿Por qué hacés eso?',e:'🤨'},
+  {k:'밥 먹었어?',r:'bap meogeosseo?',s:'¿Comiste?',e:'🍚',tip:'Forma cariñosa de preguntar si alguien está bien'},
+  {k:'어디야?',r:'eodiya?',s:'¿Dónde estás?',e:'📍'},
+  {k:'잘 자',r:'jal ja',s:'Buenas noches / Duerme bien',e:'🌙'},
+  {k:'힘내',r:'himnae',s:'¡Ánimo! / ¡Vamos!',e:'💪'},
+  {k:'괜찮아?',r:'gwaenchana?',s:'¿Estás bien?',e:'🫂'},
+  {k:'미쳤어?',r:'michyeosseo?',s:'¿Estás loca/o?',e:'😤'},
+];
+const VOCAB_KDRAMA_WORLD=[
+  {k:'재벌',r:'jaebeol',s:'chaebol (millonario)',e:'🏢',tip:'El típico protagonista rico de los dramas'},
+  {k:'남자 주인공',r:'namja juingong',s:'protagonista masculino',e:'🧑'},
+  {k:'여자 주인공',r:'yeoja juingong',s:'protagonista femenina',e:'👩'},
+  {k:'짝사랑',r:'jjaksarang',s:'amor no correspondido',e:'💘'},
+  {k:'고백',r:'gobaek',s:'confesión de amor',e:'💌',tip:'El momento más esperado del drama'},
+  {k:'키스신',r:'kiseusin',s:'escena del beso',e:'💋'},
+  {k:'오해',r:'ohae',s:'malentendido',e:'😕',tip:'La causa del 90% de los problemas en los dramas'},
+  {k:'기억상실',r:'gieogsangsil',s:'amnesia',e:'🧠',tip:'Un clásico del drama coreano'},
+  {k:'삼각관계',r:'samgakgwangye',s:'triángulo amoroso',e:'💔'},
+  {k:'해피엔딩',r:'haepiendig',s:'final feliz',e:'🌈'},
+];
+
+const KDRAMA_SCENES=[
+  {
+    title:'La Confesión de Amor 💌',
+    drama:'Clásico de todos los dramas',
+    emoji:'💕',
+    dialogue:[
+      {speaker:'Protagonista',k:'나 너 좋아해',r:'na neo joahae',s:'Me gustas'},
+      {speaker:'',k:'아니... 사랑해',r:'ani... saranghae',s:'No... te amo'},
+      {speaker:'Respuesta',k:'나도',r:'nado',s:'Yo también'},
+    ],
+    vocab:[{k:'좋아하다',r:'joahada',s:'gustar'},{k:'사랑하다',r:'saranghada',s:'amar'},{k:'나도',r:'nado',s:'yo también'}],
+    note:'나도 (nado) = yo también. Es la respuesta más esperada en cualquier drama. 😭'
+  },
+  {
+    title:'La Escena de la Lluvia ☔',
+    drama:'Clásico de romance',
+    emoji:'🌧️',
+    dialogue:[
+      {speaker:'Él',k:'왜 울어?',r:'wae ureo?',s:'¿Por qué llorás?'},
+      {speaker:'Ella',k:'안 울어',r:'an ureo',s:'No lloro'},
+      {speaker:'Él',k:'빗물이잖아',r:'binmuri jana',s:'Son gotas de lluvia...'},
+      {speaker:'Ella',k:'...보고 싶었어',r:'...bogo sipeosseo',s:'...te extrañé'},
+    ],
+    vocab:[{k:'왜',r:'wae',s:'por qué'},{k:'울다',r:'ulda',s:'llorar'},{k:'빗물',r:'binmul',s:'agua de lluvia'},{k:'보고 싶다',r:'bogo sipda',s:'extrañar'}],
+    note:'울다 = llorar. 안 + verbo = negación. 안 울어 = no lloro. 😢'
+  },
+  {
+    title:'La Escena del Hospital 🏥',
+    drama:'Aparece en casi todos los dramas',
+    emoji:'💉',
+    dialogue:[
+      {speaker:'Médico',k:'괜찮으세요?',r:'gwaenchaneuseyo?',s:'¿Está bien?'},
+      {speaker:'',k:'어디가 아프세요?',r:'eodiga apeuseyo?',s:'¿Dónde le duele?'},
+      {speaker:'Paciente',k:'여기 아파요',r:'yeogi apayo',s:'Acá me duele'},
+      {speaker:'',k:'많이 다쳤어요',r:'mani dachyeosseoyo',s:'Me lastimé mucho'},
+    ],
+    vocab:[{k:'병원',r:'byeongwon',s:'hospital'},{k:'아프다',r:'apeuda',s:'doler'},{k:'다치다',r:'dachida',s:'lastimarse'},{k:'많이',r:'mani',s:'mucho'}],
+    note:'어디가 아프세요? = la pregunta clásica del médico en todo drama. 🏥'
+  },
+  {
+    title:'¡Que ricaaa! (Escena de comida) 🍜',
+    drama:'K-Food siempre presente',
+    emoji:'😋',
+    dialogue:[
+      {speaker:'Personaje',k:'와, 진짜 맛있다!',r:'wa, jinjja masitda!',s:'¡Wow, está realmente delicioso!'},
+      {speaker:'',k:'더 먹어',r:'deo meogeo',s:'Come más'},
+      {speaker:'',k:'맛있게 먹어줘서 고마워',r:'masitge meogeojwoseo gomawo',s:'Gracias por comer con gusto'},
+    ],
+    vocab:[{k:'맛있다',r:'masitda',s:'estar delicioso'},{k:'더',r:'deo',s:'más'},{k:'맛없다',r:'maseobda',s:'no estar rico'}],
+    note:'맛있다 (masitda) = delicioso. ¡La expresión más útil en Corea! 😋'
+  },
+];
+
 const GRAMMAR_LESSONS=[
   {title:'이에요/예요 — "soy/es"',icon:'⚙️',npc:'👩',npcName:'Anna',npcText:'¡Hola Karol! Soy Anna (안나). Te enseño cómo decir "soy" en coreano. ¡Es fácil!',
     explanation:'En coreano se usa <strong>이에요</strong> después de consonante y <strong>예요</strong> después de vocal.',
@@ -929,6 +1145,7 @@ function openArea(area) {
   else startLesson(area);
 }
 
+
 // ══════════════════════════════════════════════
 //  LESSON ENGINE
 // ══════════════════════════════════════════════
@@ -949,6 +1166,8 @@ function buildSlides(area) {
   if (area==='vocab') return buildVocabSlides('MARKET SQUARE', VOCAB_OBJECTS.concat(VOCAB_FOOD).concat(VOCAB_VERBS));
   if (area==='grammar') return buildGrammarSlides();
   if (area==='culture') return buildCultureSlides();
+  if (area==='kpop') return buildKpopSlides();
+  if (area==='kdrama') return buildKdramaSlides();
   return [];
 }
 
@@ -1058,6 +1277,137 @@ function buildCultureSlides() {
       <p style="font-size:13px;color:var(--brown-mid);font-weight:600;line-height:1.6;margin-bottom:10px">${c.content}</p>
       <div class="card-tip">🌟 <strong>Dato:</strong> ${c.fact}</div>`
     });
+  });
+  return s;
+}
+
+function buildKpopSlides() {
+  const s=[];
+  s.push({type:'intro',title:'K-POP STAGE',npc:'🎵',npcName:'DJ Idol',npcText:'¡Hola Karol! ¿Sabías que el K-pop es una de las mejores formas de aprender coreano? Vas a aprender vocabulario de tus canciones favoritas de BTS, BLACKPINK, IU y más. ¡Vamos!',
+    content:`<div class="card-type">🎵 K-POP</div>
+    <div style="font-size:40px;text-align:center;margin:10px 0">🎤🌟💿</div>
+    <div style="font-size:15px;font-weight:700;text-align:center;color:var(--brown-dark);margin-bottom:12px">Artistas que vas a explorar:</div>
+    <div class="card-grid">
+      ${[{k:'BTS',r:'방탄소년단',s:'Bangtan Sonyeondan'},{k:'BLACKPINK',r:'블랙핑크',s:'Grupo femenino'},{k:'IU',r:'아이유',s:'Cantante solista'},{k:'LISA',r:'리사',s:'Solista/BLACKPINK'}]
+        .map(a=>`<div class="card-grid-item"><div class="gi-korean">${a.k}</div><div class="gi-roman">${a.r}</div><div class="gi-meaning">${a.s}</div></div>`).join('')}
+    </div>
+    <div class="card-tip">💡 Escuchar canciones en coreano entrena tu oído. ¡Incluso si no entendés todo, el cerebro absorbe los patrones!</div>`
+  });
+
+  // Fan vocabulary
+  s.push({type:'vocab-grid',title:'Vocabulario Fan ⭐',npc:'🤩',npcName:'Fangirl Mode',npcText:'¡Este vocabulario lo vas a necesitar si sos fan! Es el idioma secreto de los K-pop stans.',
+    content:`<div class="card-type">🎵 Fan Vocab</div>${VOCAB_KPOP_FAN.map(w=>`
+    <div class="card-example"><div style="display:flex;align-items:center;gap:10px">
+      <span style="font-size:20px">${w.e||'🎵'}</span>
+      <div><div class="ex-korean">${w.k}</div><div class="ex-roman">${w.r}</div><div class="ex-spanish">${w.s}</div>
+      ${w.tip?`<div style="font-size:11px;color:var(--purple-dark);font-style:italic">✨ ${w.tip}</div>`:''}
+      </div></div></div>`).join('')}`
+  });
+
+  // Song vocabulary
+  s.push({type:'vocab-grid',title:'Palabras en Canciones 🎶',
+    content:`<div class="card-type">🎵 Palabras del K-pop</div>${VOCAB_KPOP_WORDS.map(w=>`
+    <div class="card-example"><div style="display:flex;align-items:center;gap:10px">
+      <span style="font-size:20px">${w.e||'🎵'}</span>
+      <div><div class="ex-korean">${w.k}</div><div class="ex-roman">${w.r}</div><div class="ex-spanish">${w.s}</div>
+      ${w.tip?`<div style="font-size:11px;color:var(--purple-dark);font-style:italic">🎵 ${w.tip}</div>`:''}
+      </div></div></div>`).join('')}`
+  });
+
+  // Song slides
+  KPOP_SONGS.forEach(song=>{
+    s.push({type:'song',title:song.song,
+      content:`<div class="card-type">🎵 ${song.emoji} Canción</div>
+      <div style="font-size:16px;font-weight:800;color:var(--brown-dark);margin-bottom:12px">${song.song}</div>
+      <div style="background:var(--brown-dark);border-radius:6px;padding:14px 16px;margin-bottom:12px">
+        ${song.lines.map(l=>`
+        <div style="margin-bottom:10px">
+          <div style="font-size:16px;font-weight:800;color:var(--yellow)">${l.k}</div>
+          <div style="font-size:12px;color:var(--brown-light);font-style:italic">${l.r}</div>
+          <div style="font-size:13px;color:#fff;font-weight:600">${l.s}</div>
+        </div>`).join('')}
+      </div>
+      <div style="font-size:13px;font-weight:700;color:var(--brown-dark);margin-bottom:6px">🔑 Vocabulario clave:</div>
+      <div class="card-grid">${song.vocab.map(v=>`<div class="card-grid-item"><div class="gi-korean">${v.k}</div><div class="gi-roman">${v.r}</div><div class="gi-meaning">${v.s}</div></div>`).join('')}</div>
+      <div class="card-tip">💡 ${song.note}</div>`
+    });
+  });
+
+  s.push({type:'outro',title:'¡K-POP completado!',
+    content:`<div class="card-type">🎵 ¡Completado!</div>
+    <div style="font-size:48px;text-align:center;margin:12px 0">🏆</div>
+    <div style="font-size:16px;font-weight:800;text-align:center;color:var(--brown-dark);margin-bottom:12px">¡Sos una experta en K-pop coreano!</div>
+    <div class="card-tip">🎯 <strong>Próximo paso:</strong> Escuchá tus canciones favoritas y tratá de identificar las palabras que aprendiste. ¡Tu oído va a mejorar muchísimo!</div>
+    <div class="card-example"><div class="ex-korean">나는 K-pop을 좋아해요</div><div class="ex-roman">naneun K-pop-eul joahaeyo</div><div class="ex-spanish">Me gusta el K-pop</div></div>`
+  });
+  return s;
+}
+
+function buildKdramaSlides() {
+  const s=[];
+  s.push({type:'intro',title:'DRAMA HOUSE',npc:'🎬',npcName:'Director',npcText:'¡Bienvenida al Drama House, Karol! Los K-dramas son perfectos para aprender coreano natural. Vas a aprender las frases más usadas en los dramas, emociones, y ¡hasta vocabulario de tus escenas favoritas!',
+    content:`<div class="card-type">🎬 K-DRAMA</div>
+    <div style="font-size:40px;text-align:center;margin:10px 0">📺💕🍜</div>
+    <div style="font-size:14px;font-weight:700;text-align:center;color:var(--brown-dark);margin-bottom:10px">Dramas populares para aprender:</div>
+    <div class="card-grid">
+      ${[{k:'사랑의 불시착',r:'Crash Landing on You',s:'Romance'},{k:'이태원 클라쓰',r:'Itaewon Class',s:'Drama'},{k:'오징어 게임',r:'Squid Game',s:'Thriller'},{k:'도깨비',r:'Goblin',s:'Fantasy'}]
+        .map(d=>`<div class="card-grid-item"><div class="gi-korean" style="font-size:12px">${d.k}</div><div class="gi-roman">${d.r}</div><div class="gi-meaning">${d.s}</div></div>`).join('')}
+    </div>`
+  });
+
+  s.push({type:'vocab-grid',title:'Emociones del Drama 💕',npc:'💕',npcName:'La protagonista',npcText:'En los dramas vas a escuchar MUCHAS emociones. ¡Aprendé a reconocerlas!',
+    content:`<div class="card-type">💕 Emociones</div>${VOCAB_KDRAMA_EMOTIONS.map(w=>`
+    <div class="card-example"><div style="display:flex;align-items:center;gap:10px">
+      <span style="font-size:20px">${w.e}</span>
+      <div><div class="ex-korean">${w.k}</div><div class="ex-roman">${w.r}</div><div class="ex-spanish">${w.s}</div>
+      ${w.tip?`<div style="font-size:11px;color:var(--purple-dark);font-style:italic">✨ ${w.tip}</div>`:''}
+      </div></div></div>`).join('')}`
+  });
+
+  s.push({type:'vocab-grid',title:'Frases Clásicas 🎬',npc:'😮',npcName:'Fan de dramas',npcText:'Estas frases las vas a escuchar en CADA drama. Si las sabés, vas a entender el 50% de cualquier escena.',
+    content:`<div class="card-type">🎬 Frases Clásicas</div>${VOCAB_KDRAMA_PHRASES.map(w=>`
+    <div class="card-example"><div style="display:flex;align-items:center;gap:10px">
+      <span style="font-size:20px">${w.e}</span>
+      <div><div class="ex-korean">${w.k}</div><div class="ex-roman">${w.r}</div><div class="ex-spanish">${w.s}</div>
+      ${w.tip?`<div style="font-size:11px;color:var(--purple-dark);font-style:italic">✨ ${w.tip}</div>`:''}
+      </div></div></div>`).join('')}`
+  });
+
+  s.push({type:'vocab-grid',title:'El mundo del Drama 📺',
+    content:`<div class="card-type">📺 Mundo Drama</div>${VOCAB_KDRAMA_WORLD.map(w=>`
+    <div class="card-example"><div style="display:flex;align-items:center;gap:10px">
+      <span style="font-size:20px">${w.e}</span>
+      <div><div class="ex-korean">${w.k}</div><div class="ex-roman">${w.r}</div><div class="ex-spanish">${w.s}</div>
+      ${w.tip?`<div style="font-size:11px;color:var(--purple-dark);font-style:italic">😄 ${w.tip}</div>`:''}
+      </div></div></div>`).join('')}`
+  });
+
+  // Drama scenes
+  KDRAMA_SCENES.forEach(scene=>{
+    s.push({type:'scene',title:scene.title,
+      content:`<div class="card-type">🎬 ${scene.emoji} Escena</div>
+      <div style="font-size:15px;font-weight:800;color:var(--brown-dark);margin-bottom:4px">${scene.title}</div>
+      <div style="font-size:11px;color:var(--brown-mid);font-weight:600;margin-bottom:12px;font-style:italic">${scene.drama}</div>
+      <div style="background:var(--brown-dark);border-radius:6px;padding:14px 16px;margin-bottom:12px">
+        ${scene.dialogue.map(l=>`
+        <div style="margin-bottom:10px">
+          ${l.speaker?`<div style="font-size:9px;color:var(--teal);font-family:'Press Start 2P',monospace;margin-bottom:3px">${l.speaker}</div>`:''}
+          <div style="font-size:16px;font-weight:800;color:var(--yellow)">${l.k}</div>
+          <div style="font-size:11px;color:var(--brown-light);font-style:italic">${l.r}</div>
+          <div style="font-size:13px;color:#fff;font-weight:600">${l.s}</div>
+        </div>`).join('')}
+      </div>
+      <div class="card-grid">${scene.vocab.map(v=>`<div class="card-grid-item"><div class="gi-korean">${v.k}</div><div class="gi-roman">${v.r}</div><div class="gi-meaning">${v.s}</div></div>`).join('')}</div>
+      <div class="card-tip">💡 ${scene.note}</div>`
+    });
+  });
+
+  s.push({type:'outro',title:'¡Drama House completado!',
+    content:`<div class="card-type">🎬 ¡Completado!</div>
+    <div style="font-size:48px;text-align:center;margin:12px 0">🏆</div>
+    <div style="font-size:16px;font-weight:800;text-align:center;color:var(--brown-dark);margin-bottom:12px">¡Ya hablás como protagonista de K-drama!</div>
+    <div class="card-tip">🎯 <strong>Consejo:</strong> Mirá tus dramas favoritos con subtítulos en español y buscá las frases que aprendiste. ¡Vas a sorprenderte!</div>
+    <div class="card-example"><div class="ex-korean">나는 K드라마를 좋아해요</div><div class="ex-roman">naneun K-drama-reul joahaeyo</div><div class="ex-spanish">Me gustan los K-dramas</div></div>`
   });
   return s;
 }
