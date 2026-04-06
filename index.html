@@ -1593,7 +1593,9 @@ const ACHIEVEMENTS=[
   {icon:'🔥',name:'Racha 7d',cond:s=>s.streak>=7},
   {icon:'🌟',name:'Nivel 5',cond:s=>s.level>=5},
   {icon:'☁️',name:'En la nube',cond:s=>!!currentUser},
-  {icon:'👑',name:'Todo x6',cond:s=>s.lessonsCompleted.length>=6},
+  {icon:'🎵',name:'K-POP fan',cond:s=>s.lessonsCompleted.includes('kpop')},
+  {icon:'🎬',name:'Kdrama lover',cond:s=>s.lessonsCompleted.includes('kdrama')},
+  {icon:'👑',name:'Todo x8',cond:s=>s.lessonsCompleted.length>=8},
 ];
 
 function loadProgressScreen() {
