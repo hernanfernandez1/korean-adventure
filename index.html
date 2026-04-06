@@ -452,7 +452,7 @@ body{font-family:'Nunito',sans-serif;background:#2a4a1a;touch-action:manipulatio
       <div class="fc-counter" id="fc-counter">0/0</div>
     </div>
     <div class="fc-scene">
-      <div class="fc-tap-hint">👆 Tap para voltear</div>
+      <div class="fc-tap-hint">👆 Tap para voltear &nbsp;|&nbsp; 🔊 para escuchar</div>
       <div class="fc-card-wrap" onclick="flipCard()">
         <div class="fc-card" id="fc-card">
           <div class="fc-front">
@@ -468,6 +468,7 @@ body{font-family:'Nunito',sans-serif;background:#2a4a1a;touch-action:manipulatio
       </div>
       <div class="fc-actions">
         <button class="btn red sm" onclick="fcAnswer(false)">😅 Repasar</button>
+        <button class="btn white sm" onclick="speakKorean(fcDeck[fcIdx]?.k)">🔊</button>
         <button class="btn sm" onclick="fcAnswer(true)">✅ ¡Lo sé!</button>
       </div>
       <div class="fc-progress-dots" id="fc-dots"></div>
@@ -486,8 +487,9 @@ body{font-family:'Nunito',sans-serif;background:#2a4a1a;touch-action:manipulatio
     <div class="quiz-progress"><div class="quiz-progress-fill" id="quiz-prog-fill" style="width:0%"></div></div>
     <div class="quiz-question">
       <div class="quiz-q-type" id="quiz-type-label">Vocabulario</div>
-      <div class="quiz-q-text" id="quiz-q-text">안녕하세요</div>
+      <div class="quiz-q-text" id="quiz-q-text" style="cursor:pointer" onclick="speakCurrentQuestion()" title="Tap para escuchar">안녕하세요</div>
       <div class="quiz-q-sub" id="quiz-q-sub">¿Qué significa esta palabra?</div>
+      <div style="font-size:11px;color:var(--brown-mid);margin-top:4px;font-weight:600">🔊 Tap la palabra para escucharla</div>
     </div>
     <div class="quiz-options" id="quiz-options"></div>
     <div class="quiz-feedback" id="quiz-feedback">Elegí una respuesta 👆</div>
@@ -1212,9 +1214,11 @@ function buildVocabSlides(title, vocab) {
       content:`<div class="card-type">Vocabulario</div>${chunk.map(w=>`
       <div class="card-example"><div style="display:flex;align-items:center;gap:10px">
         <span style="font-size:22px">${w.e||'📝'}</span>
-        <div><div class="ex-korean">${w.k}</div><div class="ex-roman">${w.r}</div><div class="ex-spanish">${w.s}</div>
+        <div style="flex:1"><div class="ex-korean">${w.k}</div><div class="ex-roman">${w.r}</div><div class="ex-spanish">${w.s}</div>
         ${w.tip?`<div style="font-size:11px;color:var(--purple-dark);font-style:italic;margin-top:1px">✨ ${w.tip}</div>`:''}
-        </div></div></div>`).join('')}`
+        </div>
+        <button onclick="speakWord('${w.k.replace(/'/g,"\\'")}');event.stopPropagation()" style="background:var(--sky);border:2px solid var(--sky-dark);border-radius:50%;width:34px;height:34px;font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center" title="Escuchar">🔊</button>
+      </div></div>`).join('')}`
     });
   }
   return s;
@@ -1254,7 +1258,7 @@ function buildGrammarSlides() {
       <div style="font-size:15px;font-weight:800;color:var(--brown-dark);margin-bottom:8px">${g.title}</div>
       <div class="card-tip"><strong>Regla:</strong> ${g.rule}</div>
       <p style="color:var(--brown-mid);font-size:12px;margin:8px 0;font-weight:600">${g.explanation}</p>
-      ${g.examples.map(ex=>`<div class="card-example"><div class="ex-korean">${ex.k}</div><div class="ex-roman">${ex.r}</div><div class="ex-spanish">${ex.s}</div></div>`).join('')}
+      ${g.examples.map(ex=>`<div class="card-example" style="display:flex;align-items:center;gap:8px"><div style="flex:1"><div class="ex-korean">${ex.k}</div><div class="ex-roman">${ex.r}</div><div class="ex-spanish">${ex.s}</div></div><button onclick="speakWord('${ex.k.replace(/'/g,"\\'")}');event.stopPropagation()" style="background:var(--sky);border:2px solid var(--sky-dark);border-radius:50%;width:32px;height:32px;font-size:14px;cursor:pointer;flex-shrink:0">🔊</button></div>`).join('')}
       <div class="card-tip">${g.tip}</div>`
     });
   });
@@ -1454,6 +1458,8 @@ function renderFC() {
   const card=fcDeck[fcIdx];
   document.getElementById('fc-card').classList.remove('flipped');
   document.getElementById('fc-korean').textContent=card.k;
+  // Auto-speak the Korean word after a short delay
+  setTimeout(()=>speakKorean(card.k), 300);
   document.getElementById('fc-hint').textContent='¿Sabes qué significa?';
   document.getElementById('fc-roman').textContent=card.r;
   document.getElementById('fc-meaning').textContent=`${card.e||''} ${card.s}`;
@@ -1467,7 +1473,11 @@ function renderFC() {
   });
 }
 
-function flipCard(){document.getElementById('fc-card').classList.toggle('flipped');}
+function flipCard(){
+  document.getElementById('fc-card').classList.toggle('flipped');
+  const isFlipped = document.getElementById('fc-card').classList.contains('flipped');
+  if (!isFlipped && fcDeck[fcIdx]) speakKorean(fcDeck[fcIdx].k);
+}
 
 function fcAnswer(knew) {
   if(knew){fcKnown.add(fcIdx);state.cardsLearned++;}
@@ -1609,6 +1619,35 @@ function loadProgressScreen() {
     `<div class="achievement ${a.cond(state)?'':'locked'}">
       ${a.icon}<span class="ach-name">${a.name}</span></div>`).join('');
 }
+
+// ══════════════════════════════════════════════
+//  AUDIO — Web Speech API (ko-KR)
+// ══════════════════════════════════════════════
+let speechEnabled = true;
+
+function speakKorean(text) {
+  if (!text || !speechEnabled) return;
+  // Only speak Korean text (skip Spanish/romanization)
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'ko-KR';
+  u.rate = 0.75;   // slower = clearer for learning
+  u.pitch = 1.05;
+  window.speechSynthesis.speak(u);
+}
+
+// Used by the quiz tap-to-hear feature
+function speakCurrentQuestion() {
+  const q = quizQ[quizIdx];
+  if (!q) return;
+  // Only speak if it looks like Korean (contains Hangul)
+  if (/[\uAC00-\uD7AF\u1100-\u11FF]/.test(q.question)) {
+    speakKorean(q.question);
+  }
+}
+
+// Called from lesson card examples — we pass korean text directly
+function speakWord(text) { speakKorean(text); }
 
 // ══════════════════════════════════════════════
 //  INIT
