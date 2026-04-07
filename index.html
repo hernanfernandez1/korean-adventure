@@ -205,6 +205,25 @@ body{font-family:'Nunito',sans-serif;background:#2a4a1a;touch-action:manipulatio
 .save-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:14px}
 
 /* ══════════════════════════
+   MATCH GAME SCREEN
+══════════════════════════ */
+#screen-match{background:linear-gradient(135deg,#e8f0fe,#fce4ec)}
+.match-container{width:100%;max-width:600px;padding:12px;display:flex;flex-direction:column;height:100vh}
+.match-header{display:flex;gap:8px;align-items:center;margin-bottom:10px}
+.match-title{flex:1;font-family:'Press Start 2P',monospace;font-size:8px;color:var(--brown-dark);background:var(--yellow);border:3px solid var(--brown-dark);padding:8px 12px;box-shadow:2px 2px 0 var(--brown-dark);border-radius:3px}
+.match-counter{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--brown-dark);background:var(--cream);border:3px solid var(--brown-dark);padding:8px 12px;box-shadow:2px 2px 0 var(--brown-dark);border-radius:3px;flex-shrink:0}
+.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;flex:1;overflow-y:auto;padding-bottom:10px}
+.match-col{display:flex;flex-direction:column;gap:8px}
+.match-col-label{font-family:'Press Start 2P',monospace;font-size:6px;color:var(--brown-mid);text-align:center;margin-bottom:2px}
+.match-item{background:var(--cream);border:3px solid var(--brown-dark);box-shadow:3px 3px 0 var(--brown-dark);border-radius:4px;padding:12px 8px;text-align:center;cursor:pointer;transition:transform .1s,box-shadow .1s,background .15s;min-height:52px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;color:var(--brown-dark);word-break:break-word}
+.match-item:hover:not(.matched):not(.selected){transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--brown-dark);background:var(--parchment)}
+.match-item.selected{background:var(--sky);border-color:#3a90d0;box-shadow:3px 3px 0 #3a90d0;transform:translate(-1px,-1px)}
+.match-item.matched{background:#c8f0c8;border-color:var(--green-dark);box-shadow:3px 3px 0 var(--green-dark);cursor:default;opacity:.7}
+.match-item.matched::after{content:' ✓';color:var(--green-dark)}
+.match-item.wrong-shake{animation:shake .4s ease-in-out;background:#f0c8c8;border-color:var(--red)}
+.match-feedback{font-family:'Press Start 2P',monospace;font-size:7px;text-align:center;padding:8px;color:var(--brown-mid);min-height:30px}
+
+/* ══════════════════════════
    RESULT OVERLAY
 ══════════════════════════ */
 #screen-result{background:rgba(0,0,0,.6);z-index:200}
@@ -234,17 +253,20 @@ body{font-family:'Nunito',sans-serif;background:#2a4a1a;touch-action:manipulatio
 @media(max-width:640px){
   .title-panel{padding:18px 20px}
   .title-panel h1{font-size:11px}
-  .map-grid{grid-template-columns:repeat(2,1fr);grid-template-rows:auto;width:100%}
-  .map-area{height:130px}
-  .map-area .area-icon{font-size:32px;margin-bottom:4px}
+  .map-container{padding:10px 8px}
+  .map-grid{grid-template-columns:repeat(2,1fr);grid-template-rows:auto;width:100%;gap:8px}
+  .map-area{height:auto;min-height:110px;padding:10px 8px}
+  .map-area .area-icon{font-size:30px;margin-bottom:4px}
   .map-area .area-name{font-size:5px}
   .map-area .area-sub{font-size:9px}
-  .home-area{grid-column:span 2;height:80px;flex-direction:row;gap:10px}
+  .home-area{grid-column:span 2;min-height:70px;flex-direction:row;gap:10px}
   .home-area .area-icon{margin-bottom:0;font-size:28px}
+  .progress-area-mobile{grid-column:span 2;min-height:60px}
   .quiz-options{grid-template-columns:1fr 1fr}
   .quiz-q-text{font-size:36px}
   .lesson-card .card-main-korean{font-size:50px}
   .card-grid{grid-template-columns:repeat(auto-fill,minmax(85px,1fr))}
+  .match-item{font-size:13px;padding:10px 6px;min-height:48px}
 }
 
 /* ══════════════════════════
@@ -253,10 +275,12 @@ body{font-family:'Nunito',sans-serif;background:#2a4a1a;touch-action:manipulatio
 @media(max-width:420px){
   .title-panel h1{font-size:9px}
   .hud-name{display:none}
-  .map-container{padding:10px}
-  .map-grid{gap:8px}
-  .map-area{height:110px;padding:8px}
-  .map-area .area-icon{font-size:28px}
+  .map-container{padding:8px 6px}
+  .map-grid{gap:6px}
+  .map-area{min-height:100px;padding:8px 6px}
+  .map-area .area-icon{font-size:26px}
+  .map-area .area-name{font-size:4px}
+  .map-area .area-sub{font-size:8px}
   .quiz-q-text{font-size:30px}
   .quiz-option{font-size:14px;min-height:52px;padding:10px 8px}
   .fc-front .fc-korean{font-size:44px}
@@ -270,6 +294,8 @@ body{font-family:'Nunito',sans-serif;background:#2a4a1a;touch-action:manipulatio
   .result-title{font-size:10px}
   .achievement-grid{grid-template-columns:repeat(4,1fr)}
   .achievement{font-size:20px;padding:8px 4px}
+  .match-item{font-size:12px;padding:8px 4px;min-height:44px}
+  .match-grid{gap:6px}
 }
 </style>
 </head>
@@ -328,6 +354,7 @@ body{font-family:'Nunito',sans-serif;background:#2a4a1a;touch-action:manipulatio
     </div>
     <div class="hud-level" id="hud-level">Nv.1</div>
     <div class="hud-streak">🔥<span id="hud-streak">0</span></div>
+    <button class="btn sm purple" onclick="goProgress()" style="font-size:6px;padding:6px 8px;min-height:34px">📊</button>
     <button class="btn sm gray" onclick="goTitle()" style="font-size:7px;padding:6px 8px;min-height:34px">🏠</button>
   </div>
 
@@ -378,6 +405,31 @@ body{font-family:'Nunito',sans-serif;background:#2a4a1a;touch-action:manipulatio
         <div class="area-progress"><div class="area-progress-fill" id="prog-grammar" style="width:0%"></div></div>
       </div>
 
+      <!-- Row 3 (desktop) / continues mobile -->
+      <div class="map-area" onclick="openArea('kpop')">
+        <div class="new-badge">¡NUEVO!</div>
+        <div class="area-icon">🎵</div>
+        <div class="area-name">K-POP<br>STAGE</div>
+        <div class="area-sub">Canciones</div>
+        <div class="area-progress"><div class="area-progress-fill" id="prog-kpop" style="width:0%"></div></div>
+      </div>
+
+      <div class="map-area" onclick="openArea('kdrama')">
+        <div class="new-badge">¡NUEVO!</div>
+        <div class="area-icon">🎬</div>
+        <div class="area-name">DRAMA<br>HOUSE</div>
+        <div class="area-sub">K-Dramas</div>
+        <div class="area-progress"><div class="area-progress-fill" id="prog-kdrama" style="width:0%"></div></div>
+      </div>
+
+      <div class="map-area" onclick="openArea('culture')">
+        <div class="area-icon">🏯</div>
+        <div class="area-name">CULTURE<br>PALACE</div>
+        <div class="area-sub">Curiosidades</div>
+        <div class="area-progress"><div class="area-progress-fill" id="prog-culture" style="width:0%"></div></div>
+      </div>
+
+      <!-- Row 4 activities -->
       <div class="map-area" onclick="openArea('flashcards')">
         <div class="area-icon">🎴</div>
         <div class="area-name">CARD<br>SHRINE</div>
@@ -392,31 +444,16 @@ body{font-family:'Nunito',sans-serif;background:#2a4a1a;touch-action:manipulatio
         <div class="area-progress"><div class="area-progress-fill" id="prog-quiz" style="width:0%"></div></div>
       </div>
 
-      <div class="map-area" onclick="openArea('culture')">
-        <div class="area-icon">🏯</div>
-        <div class="area-name">CULTURE<br>PALACE</div>
-        <div class="area-sub">Curiosidades</div>
-        <div class="area-progress"><div class="area-progress-fill" id="prog-culture" style="width:0%"></div></div>
-      </div>
-
-      <!-- Row 4 -->
-      <div class="map-area" onclick="openArea('kpop')">
+      <div class="map-area" onclick="openArea('match')">
         <div class="new-badge">¡NUEVO!</div>
-        <div class="area-icon">🎵</div>
-        <div class="area-name">K-POP<br>STAGE</div>
-        <div class="area-sub">Aprende con canciones</div>
-        <div class="area-progress"><div class="area-progress-fill" id="prog-kpop" style="width:0%"></div></div>
+        <div class="area-icon">🔗</div>
+        <div class="area-name">MATCH<br>BRIDGE</div>
+        <div class="area-sub">Emparejar</div>
+        <div class="area-progress"><div class="area-progress-fill" id="prog-match" style="width:0%"></div></div>
       </div>
 
-      <div class="map-area" onclick="openArea('kdrama')">
-        <div class="new-badge">¡NUEVO!</div>
-        <div class="area-icon">🎬</div>
-        <div class="area-name">DRAMA<br>HOUSE</div>
-        <div class="area-sub">Aprende con K-dramas</div>
-        <div class="area-progress"><div class="area-progress-fill" id="prog-kdrama" style="width:0%"></div></div>
-      </div>
-
-      <div class="map-area" onclick="goProgress()" style="background:linear-gradient(135deg,#fff8e1,#fce4ec)">
+      <!-- Row 5 mobile only: full-width progress -->
+      <div class="map-area progress-area-mobile" onclick="goProgress()" style="background:linear-gradient(135deg,#fff8e1,#fce4ec)">
         <div class="area-icon">📊</div>
         <div class="area-name">MI<br>PROGRESO</div>
         <div class="area-sub">Stats & logros</div>
@@ -424,6 +461,12 @@ body{font-family:'Nunito',sans-serif;background:#2a4a1a;touch-action:manipulatio
 
     </div>
   </div>
+
+  <!-- Desktop HUD progress button -->
+  <style>
+    .progress-area-mobile { display: none; }
+    @media(max-width:640px){ .progress-area-mobile { display: flex; } }
+  </style>
 </div>
 
 <!-- ═══════ LESSON SCREEN ═══════ -->
@@ -501,7 +544,7 @@ body{font-family:'Nunito',sans-serif;background:#2a4a1a;touch-action:manipulatio
 <div class="screen" id="screen-progress">
   <div class="progress-container">
     <div class="progress-header">
-      <div class="lesson-back" onclick="goTitle()">← Inicio</div>
+      <div class="lesson-back" onclick="goMap()">← Mapa</div>
       <div class="progress-title">📊 Tu Progreso</div>
     </div>
     <div class="stat-card">
@@ -511,6 +554,7 @@ body{font-family:'Nunito',sans-serif;background:#2a4a1a;touch-action:manipulatio
       <div class="stat-row">Racha<span class="stat-val" id="ps-streak">0 🔥</span></div>
       <div class="stat-row">Lecciones<span class="stat-val" id="ps-lessons">0</span></div>
       <div class="stat-row">Quizzes<span class="stat-val" id="ps-quizzes">0</span></div>
+      <div class="stat-row">Rondas Emparejar<span class="stat-val" id="ps-matches">0</span></div>
       <div class="stat-row">Tarjetas aprendidas<span class="stat-val" id="ps-cards">0</span></div>
     </div>
     <div class="stat-card">
@@ -522,6 +566,28 @@ body{font-family:'Nunito',sans-serif;background:#2a4a1a;touch-action:manipulatio
       <button class="btn purple sm" onclick="document.getElementById('import-input').click()">📂 Cargar archivo</button>
       <input type="file" id="import-input" accept=".json" style="display:none" onchange="importSave(event)">
       <button class="btn red sm" onclick="if(confirm('¿Resetear todo el progreso?')){resetProgress();goTitle();}">🗑️ Resetear</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ MATCH SCREEN ═══════ -->
+<div class="screen" id="screen-match">
+  <div class="match-container">
+    <div class="match-header">
+      <div class="lesson-back" onclick="goMap()" style="font-size:7px;padding:7px 10px">← Mapa</div>
+      <div class="match-title" id="match-title">🔗 Emparejar</div>
+      <div class="match-counter" id="match-counter">0/4</div>
+    </div>
+    <div class="match-feedback" id="match-feedback">Tocá una palabra coreana, luego su traducción 👆</div>
+    <div class="match-grid">
+      <div class="match-col">
+        <div class="match-col-label">🇰🇷 COREANO</div>
+        <div id="match-left"></div>
+      </div>
+      <div class="match-col">
+        <div class="match-col-label">🇦🇷 ESPAÑOL</div>
+        <div id="match-right"></div>
+      </div>
     </div>
   </div>
 </div>
@@ -687,6 +753,7 @@ async function saveToCloud() {
       lastPlay: state.lastPlay,
       lessonsCompleted: state.lessonsCompleted,
       quizzesCompleted: state.quizzesCompleted,
+      matchesCompleted: state.matchesCompleted || 0,
       cardsLearned: state.cardsLearned,
       areaProgress: state.areaProgress,
       updatedAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -1072,7 +1139,7 @@ const CULTURE_CARDS=[
 // ══════════════════════════════════════════════
 let state = {
   xp:0, level:1, streak:0, lastPlay:null,
-  lessonsCompleted:[], quizzesCompleted:0, cardsLearned:0,
+  lessonsCompleted:[], quizzesCompleted:0, matchesCompleted:0, cardsLearned:0,
   areaProgress:{},
 };
 
@@ -1216,6 +1283,7 @@ function openArea(area) {
   currentArea = area;
   if (area === 'flashcards') startFlashcards();
   else if (area === 'quiz') startQuiz();
+  else if (area === 'match') startMatch();
   else startLesson(area);
 }
 
@@ -1571,15 +1639,20 @@ function endFlashcards() {
 let quizQ=[],quizIdx=0,quizHearts=3,quizScore=0,quizAnswered=false;
 
 function buildQuizPool() {
-  const all=[...VOCAB_GREETINGS,...VOCAB_INTRO,...VOCAB_NUMBERS_SINO,...VOCAB_OBJECTS,...VOCAB_FOOD,...VOCAB_VERBS];
-  const pool=[];
-  all.forEach(w=>{
-    const wrong=all.filter(x=>x!==w).sort(()=>Math.random()-.5).slice(0,3).map(x=>x.s);
-    pool.push({type:'Coreano → Español',question:w.k,sub:`¿Qué significa?`,correct:w.s,options:shuffle([w.s,...wrong]),roman:w.r});
-    const wrongK=all.filter(x=>x!==w).sort(()=>Math.random()-.5).slice(0,3).map(x=>x.k);
-    pool.push({type:'Español → Coreano',question:w.s,sub:`¿Cómo se dice en coreano?`,correct:w.k,options:shuffle([w.k,...wrongK])});
+  var all=[].concat(VOCAB_GREETINGS,VOCAB_INTRO,VOCAB_NUMBERS_SINO,VOCAB_OBJECTS,VOCAB_FOOD,VOCAB_VERBS);
+  var pool=[];
+  all.forEach(function(w){
+    var wrong=all.filter(function(x){return x!==w;}).sort(function(){return Math.random()-.5;}).slice(0,3).map(function(x){return x.s;});
+    pool.push({type:'Coreano → Español',question:w.k,sub:'¿Qué significa?',correct:w.s,options:shuffle([w.s].concat(wrong)),roman:w.r,qtype:'mc'});
+    var wrongK=all.filter(function(x){return x!==w;}).sort(function(){return Math.random()-.5;}).slice(0,3).map(function(x){return x.k;});
+    pool.push({type:'Español → Coreano',question:w.s,sub:'¿Cómo se dice en coreano?',correct:w.k,options:shuffle([w.k].concat(wrongK)),qtype:'mc'});
+    // Fill-in-blank: ~25% of words
+    if(Math.random()<0.25){
+      var fillers=all.filter(function(x){return x!==w;}).sort(function(){return Math.random()-.5;}).slice(0,2).map(function(x){return x.k;});
+      pool.push({type:'Completar la frase',question:'___ = '+w.s,sub:'Seleccioná la palabra coreana correcta',correct:w.k,options:shuffle([w.k].concat(fillers)),roman:w.r,qtype:'fill'});
+    }
   });
-  return pool.sort(()=>Math.random()-.5).slice(0,15);
+  return pool.sort(function(){return Math.random()-.5;}).slice(0,15);
 }
 
 function shuffle(arr){return arr.sort(()=>Math.random()-.5);}
@@ -1678,6 +1751,7 @@ const ACHIEVEMENTS=[
   {icon:'☁️',name:'En la nube',cond:s=>!!currentUser},
   {icon:'🎵',name:'K-POP fan',cond:s=>s.lessonsCompleted.includes('kpop')},
   {icon:'🎬',name:'Kdrama lover',cond:s=>s.lessonsCompleted.includes('kdrama')},
+  {icon:'🔗',name:'Emparejar x3',cond:s=>(s.matchesCompleted||0)>=3},
   {icon:'👑',name:'Todo x8',cond:s=>s.lessonsCompleted.length>=8},
 ];
 
@@ -1687,6 +1761,7 @@ function loadProgressScreen() {
   document.getElementById('ps-streak').textContent=state.streak+' 🔥';
   document.getElementById('ps-lessons').textContent=state.lessonsCompleted.length;
   document.getElementById('ps-quizzes').textContent=state.quizzesCompleted;
+  document.getElementById('ps-matches').textContent=state.matchesCompleted||0;
   document.getElementById('ps-cards').textContent=state.cardsLearned;
   document.getElementById('achievements-grid').innerHTML=ACHIEVEMENTS.map(a=>
     `<div class="achievement ${a.cond(state)?'':'locked'}">
@@ -1694,9 +1769,142 @@ function loadProgressScreen() {
 }
 
 // ══════════════════════════════════════════════
-//  AUDIO — Web Speech API (ko-KR)
+//  MATCH GAME
 // ══════════════════════════════════════════════
+var matchPool = [];
+var matchPairs = [];
+var matchSelected = null;
+var matchMatched = 0;
+var matchRound = 0;
+var MATCH_PER_ROUND = 4;
 
+function buildMatchPool() {
+  var all = [].concat(VOCAB_GREETINGS, VOCAB_INTRO, VOCAB_NUMBERS_SINO,
+    VOCAB_OBJECTS, VOCAB_FOOD, VOCAB_VERBS,
+    VOCAB_KPOP_FAN, VOCAB_KPOP_WORDS,
+    VOCAB_KDRAMA_EMOTIONS, VOCAB_KDRAMA_PHRASES);
+  return all.filter(function(w){ return w.k && w.s; })
+            .sort(function(){ return Math.random() - 0.5; });
+}
+
+function startMatch() {
+  matchPool = buildMatchPool();
+  matchRound = 0;
+  showScreen('match');
+  nextMatchRound();
+}
+
+function nextMatchRound() {
+  var start = matchRound * MATCH_PER_ROUND;
+  if (start >= matchPool.length) {
+    matchRound = 0;
+    matchPool = buildMatchPool();
+    start = 0;
+  }
+  matchPairs = matchPool.slice(start, start + MATCH_PER_ROUND);
+  matchSelected = null;
+  matchMatched = 0;
+
+  document.getElementById('match-title').textContent = '🔗 Ronda ' + (matchRound + 1);
+  document.getElementById('match-counter').textContent = '0/' + matchPairs.length;
+  document.getElementById('match-feedback').textContent = 'Tocá una palabra coreana, luego su traducción 👆';
+
+  var leftEl = document.getElementById('match-left');
+  leftEl.innerHTML = '';
+  matchPairs.forEach(function(pair, i) {
+    var d = document.createElement('div');
+    d.className = 'match-item';
+    d.textContent = pair.k;
+    d.dataset.idx = i;
+    d.dataset.side = 'left';
+    d.onclick = function() { matchTap('left', i, d); };
+    leftEl.appendChild(d);
+  });
+
+  var rightEl = document.getElementById('match-right');
+  rightEl.innerHTML = '';
+  var shuffledIdxs = matchPairs.map(function(_, i){ return i; }).sort(function(){ return Math.random() - 0.5; });
+  shuffledIdxs.forEach(function(origIdx) {
+    var pair = matchPairs[origIdx];
+    var d = document.createElement('div');
+    d.className = 'match-item';
+    d.textContent = (pair.e ? pair.e + ' ' : '') + pair.s;
+    d.dataset.idx = origIdx;
+    d.dataset.side = 'right';
+    d.onclick = function() { matchTap('right', origIdx, d); };
+    rightEl.appendChild(d);
+  });
+}
+
+function matchTap(side, idx, el) {
+  if (el.classList.contains('matched')) return;
+
+  if (!matchSelected) {
+    if (side !== 'left') {
+      document.getElementById('match-feedback').textContent = '👆 Primero tocá una palabra coreana';
+      return;
+    }
+    document.querySelectorAll('#match-left .match-item.selected').forEach(function(e){ e.classList.remove('selected'); });
+    el.classList.add('selected');
+    matchSelected = { side: side, idx: idx, el: el };
+    speakKorean(matchPairs[idx].k);
+    document.getElementById('match-feedback').textContent = 'Ahora tocá la traducción en español →';
+    return;
+  }
+
+  if (side === 'left') {
+    document.querySelectorAll('#match-left .match-item.selected').forEach(function(e){ e.classList.remove('selected'); });
+    el.classList.add('selected');
+    matchSelected = { side: side, idx: idx, el: el };
+    speakKorean(matchPairs[idx].k);
+    return;
+  }
+
+  if (idx === matchSelected.idx) {
+    matchSelected.el.classList.remove('selected');
+    matchSelected.el.classList.add('matched');
+    el.classList.add('matched');
+    matchMatched++;
+    speakKorean(matchPairs[idx].k);
+    document.getElementById('match-counter').textContent = matchMatched + '/' + matchPairs.length;
+    var msgs = ['✅ ¡Correcto! ¡Excelente Karol!', '✅ ¡Perfecto! 🌸', '✅ ¡Muy bien! 잘했어요!', '✅ ¡Genial! 대박!'];
+    document.getElementById('match-feedback').textContent = msgs[Math.floor(Math.random() * msgs.length)];
+    matchSelected = null;
+    if (matchMatched === matchPairs.length) {
+      setTimeout(function() { matchRoundComplete(); }, 700);
+    }
+  } else {
+    el.classList.add('wrong-shake');
+    matchSelected.el.classList.add('wrong-shake');
+    matchSelected.el.classList.remove('selected');
+    document.getElementById('match-feedback').textContent = '❌ ¡Ese no era! Intentá de nuevo';
+    var wrongEl = matchSelected.el;
+    setTimeout(function() {
+      el.classList.remove('wrong-shake');
+      wrongEl.classList.remove('wrong-shake');
+    }, 450);
+    matchSelected = null;
+  }
+}
+
+function matchRoundComplete() {
+  state.matchesCompleted = (state.matchesCompleted || 0) + 1;
+  addXP(40);
+  updateAreaProgress('match', Math.min(100, state.matchesCompleted * 20));
+  var currentRound = matchRound;
+  showResult('🔗', '¡Ronda completada!', 40,
+    '¡Emparejaste todo! Ronda ' + (currentRound + 1) + ' 🌸',
+    function() {
+      matchRound = currentRound + 1;
+      showScreen('match');
+      nextMatchRound();
+    }
+  );
+}
+
+// ══════════════════════════════════════════════
+//  ACHIEVEMENTS — add matchesCompleted logro
+// ══════════════════════════════════════════════
 
 // ══════════════════════════════════════════════
 //  INIT
