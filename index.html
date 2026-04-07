@@ -102,16 +102,17 @@ body{font-family:'Nunito',sans-serif;background:#2a4a1a;touch-action:manipulatio
 /* ══════════════════════════
    LESSON SCREEN
 ══════════════════════════ */
-#screen-lesson{background:linear-gradient(135deg,#e8f4f0,#f0e8f8)}
-.lesson-container{width:100%;max-width:680px;height:100vh;display:flex;flex-direction:column;padding:12px}
-.lesson-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+#screen-lesson{background:linear-gradient(135deg,#e8f4f0,#f0e8f8);overflow:hidden}
+.lesson-container{width:100%;max-width:680px;height:100%;height:100dvh;display:flex;flex-direction:column;padding:12px;overflow:hidden}
+.lesson-header{display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-shrink:0}
 .lesson-back{font-family:'Press Start 2P',monospace;font-size:8px;cursor:pointer;background:var(--parchment);border:3px solid var(--brown-dark);box-shadow:2px 2px 0 var(--brown-dark);padding:8px 12px;border-radius:3px;color:var(--brown-dark);flex-shrink:0;min-height:40px;display:flex;align-items:center}
 .lesson-back:hover{transform:translate(-1px,-1px);box-shadow:3px 3px 0 var(--brown-dark)}
 .lesson-title-bar{flex:1;background:var(--brown-dark);border-radius:3px;padding:8px 14px}
 .lesson-title-bar h2{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--yellow)}
-.lesson-progress-bar{background:var(--parchment);border:3px solid var(--brown-dark);border-radius:20px;height:14px;overflow:hidden;margin-bottom:10px;box-shadow:2px 2px 0 var(--brown-dark)}
+.lesson-progress-bar{background:var(--parchment);border:3px solid var(--brown-dark);border-radius:20px;height:12px;overflow:hidden;margin-bottom:8px;box-shadow:2px 2px 0 var(--brown-dark);flex-shrink:0}
 .lesson-progress-fill{height:100%;background:linear-gradient(90deg,var(--pink-dark),var(--purple-dark));border-radius:20px;transition:width .4s}
-.lesson-card{flex:1;background:var(--cream);border:4px solid var(--brown-dark);box-shadow:5px 5px 0 var(--brown-dark);border-radius:6px;padding:20px 22px;overflow-y:auto;margin-bottom:10px}
+.lesson-card{flex:1;min-height:0;background:var(--cream);border:4px solid var(--brown-dark);box-shadow:5px 5px 0 var(--brown-dark);border-radius:6px;padding:16px 18px;overflow-y:auto;margin-bottom:8px;-webkit-overflow-scrolling:touch}
+.lesson-nav{display:flex;gap:10px;justify-content:space-between;flex-shrink:0}
 .lesson-card .card-type{font-family:'Press Start 2P',monospace;font-size:6px;color:var(--purple-dark);text-transform:uppercase;margin-bottom:14px;background:var(--purple);display:inline-block;padding:4px 10px;border-radius:20px}
 .lesson-card .card-main-korean{font-size:60px;text-align:center;margin:12px 0;line-height:1}
 .lesson-card .card-romanization{text-align:center;color:var(--brown-mid);font-size:15px;font-style:italic;font-weight:700;margin-bottom:6px}
@@ -128,7 +129,8 @@ body{font-family:'Nunito',sans-serif;background:#2a4a1a;touch-action:manipulatio
 .card-grid-item .gi-roman{font-size:10px;color:var(--brown-mid);font-style:italic}
 .card-grid-item .gi-meaning{font-size:11px;color:var(--green-dark);font-weight:700}
 .lesson-nav{display:flex;gap:10px;justify-content:space-between}
-.npc-box{display:flex;gap:12px;align-items:flex-start;background:var(--cream);border:4px solid var(--brown-dark);box-shadow:4px 4px 0 var(--brown-dark);border-radius:4px;padding:12px 14px;margin-bottom:10px}
+.npc-box{display:flex;gap:12px;align-items:flex-start;background:var(--cream);border:4px solid var(--brown-dark);box-shadow:4px 4px 0 var(--brown-dark);border-radius:4px;padding:10px 12px;margin-bottom:8px;flex-shrink:0}
+#npc-box-area{flex-shrink:0}
 .npc-avatar{font-size:36px;flex-shrink:0;background:var(--parchment);border:3px solid var(--brown-light);border-radius:50%;width:54px;height:54px;display:flex;align-items:center;justify-content:center}
 .npc-text{flex:1;min-width:0}
 .npc-name{font-family:'Press Start 2P',monospace;font-size:7px;color:var(--pink-dark);margin-bottom:5px}
@@ -137,12 +139,12 @@ body{font-family:'Nunito',sans-serif;background:#2a4a1a;touch-action:manipulatio
 /* ══════════════════════════
    FLASHCARD SCREEN
 ══════════════════════════ */
-#screen-flashcard{background:linear-gradient(135deg,#fce4ec,#e8f5e9)}
-.fc-container{width:100%;max-width:560px;padding:12px;display:flex;flex-direction:column;height:100vh}
-.fc-header{display:flex;gap:8px;align-items:center;margin-bottom:10px}
+#screen-flashcard{background:linear-gradient(135deg,#fce4ec,#e8f5e9);overflow:hidden}
+.fc-container{width:100%;max-width:560px;padding:12px;display:flex;flex-direction:column;height:100%;height:100dvh;overflow:hidden}
+.fc-header{display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-shrink:0}
 .fc-counter{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--brown-dark);background:var(--cream);border:3px solid var(--brown-dark);padding:8px 12px;box-shadow:2px 2px 0 var(--brown-dark);border-radius:3px;flex-shrink:0}
 .fc-title{flex:1;font-family:'Press Start 2P',monospace;font-size:7px;color:var(--brown-dark);background:var(--yellow);border:3px solid var(--brown-dark);padding:8px 12px;box-shadow:2px 2px 0 var(--brown-dark);border-radius:3px}
-.fc-scene{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.fc-scene{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;min-height:0}
 .fc-card-wrap{perspective:1000px;width:min(320px,88vw);height:200px;cursor:pointer;margin-bottom:18px}
 .fc-card{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.4,0,.2,1)}
 .fc-card.flipped{transform:rotateY(180deg)}
@@ -155,7 +157,7 @@ body{font-family:'Nunito',sans-serif;background:#2a4a1a;touch-action:manipulatio
 .fc-back .fc-example{font-size:12px;color:var(--green-dark);font-weight:600;text-align:center}
 .fc-tap-hint{font-size:12px;color:var(--brown-mid);font-weight:700;margin-bottom:14px;font-style:italic}
 .fc-actions{display:flex;gap:12px}
-.fc-progress-dots{display:flex;gap:5px;justify-content:center;margin-top:14px;flex-wrap:wrap;max-width:300px}
+.fc-progress-dots{display:flex;gap:4px;justify-content:center;margin-top:10px;flex-wrap:wrap;max-width:280px;max-height:48px;overflow:hidden}
 .fc-dot{width:9px;height:9px;border-radius:50%;border:2px solid var(--brown-mid);background:transparent;transition:background .3s}
 .fc-dot.known{background:var(--green-mid);border-color:var(--green-dark)}
 .fc-dot.review{background:var(--red);border-color:#a02020}
@@ -164,8 +166,8 @@ body{font-family:'Nunito',sans-serif;background:#2a4a1a;touch-action:manipulatio
 /* ══════════════════════════
    QUIZ SCREEN
 ══════════════════════════ */
-#screen-quiz{background:linear-gradient(135deg,#e3f2fd,#fce4ec)}
-.quiz-container{width:100%;max-width:600px;padding:12px;display:flex;flex-direction:column;height:100vh}
+#screen-quiz{background:linear-gradient(135deg,#e3f2fd,#fce4ec);overflow:hidden}
+.quiz-container{width:100%;max-width:600px;padding:12px;display:flex;flex-direction:column;height:100%;height:100dvh;overflow:hidden}
 .quiz-header{display:flex;gap:8px;align-items:center;margin-bottom:10px}
 .quiz-hearts{display:flex;gap:3px;flex-shrink:0}
 .heart{font-size:20px;transition:transform .2s}
